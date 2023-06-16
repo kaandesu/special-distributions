@@ -1,0 +1,16 @@
+{
+  "name": "prob",
+  "version": "1.0.0",
+  "description": "special random variables as functions",
+  "main": "index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "log": "clear && ts-node ./src/index.ts",
+    "render": "ts-node ./src/render.ts"
+  },
+  "author": "kaandesu",
+  "license": "MIT",
+  "dependencies": {
+    "canvas": "^2.11.2"
+  }
+}
