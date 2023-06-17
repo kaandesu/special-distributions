@@ -173,10 +173,10 @@ export class NegativeBinomial {
     return 0
   }
 
-  private tryUntil = async (total: number = 1, wins: number = 0) => {
+  private tryUntil = async (total: number = 1, wins: number = 0, want: number = 3) => {
     let temp = this.Bernoulli100()
     let result: any = 0
-    if (temp && wins === 3) {
+    if (temp && wins === want) {
       return total
     }
     result = this.tryUntil(total + 1, temp ? wins + 1 : wins)
@@ -191,14 +191,15 @@ export class NegativeBinomial {
     noop()
   }
 
-  probabilityAt(r: number) {
-    let { comb, power } = new Calc()
-    let n = this.n
-    let p = this.p
-    return comb(n - 1, r - 1) * power(p, r) * power(1 - p, n - r)
+  async probabilityAt(r: number) {
+    return await this.tryUntil(1, 0, r)
   }
 
   async calculate() {
-    return await this.tryUntil()
+    noop()
+    // let { comb, power } = new Calc()
+    // let n = this.n
+    // let p = this.p
+    // return comb(n - 1, r - 1) * power(p, r) * power(1 - p, n - r)
   }
 }

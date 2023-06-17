@@ -7,11 +7,11 @@ import { NegativeBinomial } from './../distributions'
 const geo = new NegativeBinomial(10, 0.09)
 let sums: Record<string, number> = {}
 let id = geo.id
-let totalTimes = 100_000
+let totalTimes = 20_000
 console.time('calculation')
 const setSums = async () => {
   for (let i = 0; i < totalTimes; i++) {
-    let calc = await geo.calculate()
+    let calc = await geo.probabilityAt(3)
     if (String(calc) in sums) {
       sums[String(calc)] += 1
     } else {
@@ -29,7 +29,7 @@ setSums()
     const data = sums
 
     // Set up the canvas
-    const canvasWidth = 1900 // Width of the canvas in pixels
+    const canvasWidth = Object.keys(data).length * 10 // Width of the canvas in pixels
     const canvasHeight = 1080 // Height of the canvas in pixels
     const barPadding = 10 // Padding between bars in pixels
     const maxBarHeight = canvasHeight - barPadding * 2 // Maximum height of the bars
@@ -45,7 +45,7 @@ setSums()
     const minValue = 1
     // Set up the chart colors
 
-    const labelColor = '#000000'
+    const labelColor = '#000'
 
     // Calculate the width of each bar
     const barWidth = (canvasWidth - barPadding * 2) / Object.keys(data).length
@@ -66,9 +66,23 @@ setSums()
       ctx.font = '12px sans-serif'
       ctx.textAlign = 'center'
       ctx.fillText(key, x + barWidth / 2, canvasHeight - 5)
-
+      if (maxValue === value) {
+        let fontSize = (12 * canvasWidth) / 500
+        ctx.font = String(fontSize) + 'px sans-serif'
+        ctx.fillText(`${value}/${totalTimes} @ ${key}`, fontSize * 5, fontSize * 1.5)
+      }
       x += barWidth + barPadding
     }
+    // Set the line properties
+    ctx.strokeStyle = '#000' // Color of the line
+    ctx.lineWidth = 2 // Width of the line
+    ctx.setLineDash([5, 5]) // Length of dashes and gaps
+
+    // Draw the dashed line
+    ctx.beginPath()
+    ctx.moveTo(0, 7) // Starting point (x, y)
+    ctx.lineTo(canvas.width, 7) // Ending point (x, y)
+    ctx.stroke()
 
     // Convert the canvas to a PNG image
     const chartImage = canvas.toBuffer('image/png')
