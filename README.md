@@ -71,12 +71,12 @@ It generates a chart showing the distribution of values obtained from multiple c
 
 ## Rendering Graphs
 
+First: Add a .ts file in the `render` directory to create a new example. Import the class of your distribution. Then:
+
 1. Update the `totalTimes` variable to specify the number of calculations to perform.
-2. Run the file using a TypeScript compiler or runtime environment. Or simply add it to the package.json file as a script and run it using `npm run render:geo`.
+2. Run the file using a TypeScript compiler or runtime environment. Or simply add it to the package.json file as a script and run it using `npm run render:[name]`.
 3. The script will output the progress of the calculations as a percentage.
 4. Once the calculations are complete, a chart image will be saved as `./generated/{distribution}_chart.png`, where `{distribution}` represents the specific distribution used.
-
-> TL;DR: Add a .ts file in the `render` directory to create a new example. The file should export a function that takes a `totalTimes` parameter. This parameter specifies the number of calculations to perform. The function should return a promise that resolves when the calculations are complete. To create new one, follow these steps:
 
 ## Utils
 
