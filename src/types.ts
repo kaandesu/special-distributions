@@ -3,6 +3,7 @@ import {
   BinomialDistribution,
   GeometricDistribution,
   PoissonDistribution,
+  NegativeBinomial,
 } from './distributions'
 export type Prob = number
 export type Distributions =
@@ -10,3 +11,4 @@ export type Distributions =
   | BinomialDistribution
   | PoissonDistribution
   | GeometricDistribution
+  | NegativeBinomial

@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "log": "clear && ts-node ./src/index.ts",
-    "render": "ts-node ./src/render.ts"
+    "render:geo": "ts-node ./src/render/geometric.ts",
+    "render:negbin": "ts-node ./src/render/neg_binomial.ts"
   },
   "author": "kaandesu",
   "license": "MIT",

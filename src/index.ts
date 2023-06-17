@@ -12,4 +12,4 @@ log(new BinomialDistribution(4, 1 / 3), 2)
 
 log(new PoissonDistribution(5), 4)
 
-log(new GeometricDistribution(0.5))
+log(new GeometricDistribution(0.5), 2)

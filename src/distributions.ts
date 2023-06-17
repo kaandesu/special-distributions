@@ -2,11 +2,11 @@ import { Calc, noop } from './utils'
 import { Prob } from './types'
 
 class DistributionTemplate {
-  id: 'Poisson'
+  id: 'Template'
   lambda: number
   constructor(lambda: number) {
     this.lambda = lambda
-    this.id = 'Poisson'
+    this.id = 'Template'
   }
 
   expected() {
@@ -133,10 +133,53 @@ export class GeometricDistribution {
     this.Bern = new BernoulliDistribution(p)
   }
 
-  private tryUntil = async (total: number = 1, final: number = 0) => {
+  private tryUntil = async (total: number = 1) => {
     let temp = this.Bern.calculate()
-    if (temp) return (final = total)
-    let result: any = this.tryUntil(total + 1, (final = total))
+    if (temp) return total
+    let result: any = this.tryUntil(total + 1)
+    return result
+  }
+
+  expected() {
+    return 1 / this.p
+  }
+
+  variance() {
+    return (1 - this.p) / this.p ** 2
+  }
+
+  probabilityAt(k: number) {
+    let { power } = new Calc()
+    return this.p * power(1 - this.p, k - 1)
+  }
+
+  async calculate() {
+    return await this.tryUntil()
+  }
+}
+
+export class NegativeBinomial {
+  id: string
+  n: number
+  p: Prob
+  constructor(n: number, p: Prob) {
+    this.n = n
+    this.p = p
+    this.id = 'NegativeBinomial'
+  }
+  private Bernoulli100 = () => {
+    const random = Math.floor(Math.random() * 100)
+    if (random <= this.p * 100) return 1
+    return 0
+  }
+
+  private tryUntil = async (total: number = 1, wins: number = 0) => {
+    let temp = this.Bernoulli100()
+    let result: any = 0
+    if (temp && wins === 3) {
+      return total
+    }
+    result = this.tryUntil(total + 1, temp ? wins + 1 : wins)
     return result
   }
 
@@ -148,8 +191,11 @@ export class GeometricDistribution {
     noop()
   }
 
-  probabilityAt() {
-    noop()
+  probabilityAt(r: number) {
+    let { comb, power } = new Calc()
+    let n = this.n
+    let p = this.p
+    return comb(n - 1, r - 1) * power(p, r) * power(1 - p, n - r)
   }
 
   async calculate() {
