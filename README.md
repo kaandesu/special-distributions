@@ -67,7 +67,7 @@ It generates a chart showing the distribution of values obtained from multiple c
 
 ### Example Rendered Graphs:
 
-- Negative Binomial Distribution Chart (20_000 calculations for getting 3rd win on 10th try with 9%): <img src="./generated/NegativeBinomial_chart.png"   height="300">
+- Negative Binomial Distribution Chart (10_000 calculations for getting 3rd win on 10th try with 8%): <img src="./generated/NegativeBinomial_chart.png"   height="300">
 - Geometric Distribution Chart (100_000 times trying until getting %1): <img src="./generated/Geometric_chart.png"   height="300">
 
 ---

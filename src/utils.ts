@@ -38,4 +38,5 @@ export const updateProgressBar = (currentIteration: number = 0, totalIterations:
   const emptyWidth = 20 - filledWidth
   progressBar = '[' + '#'.repeat(filledWidth) + '.'.repeat(emptyWidth) + '] ' + progress + '%'
   process.stdout.write('\r' + progressBar) // Update the progress bar on the same line
+  if (currentIteration === totalIterations - 1) process.stdout.write('\n')
 }

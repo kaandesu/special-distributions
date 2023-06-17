@@ -167,20 +167,28 @@ export class NegativeBinomial {
     this.p = p
     this.id = 'NegativeBinomial'
   }
-  private Bernoulli100 = () => {
-    const random = Math.floor(Math.random() * 100)
-    if (random <= this.p * 100) return 1
-    return 0
+  private Bernoulli100 = (): number => {
+    const random = Math.random()
+    return random <= this.p ? 1 : 0
   }
 
-  private tryUntil = async (total: number = 1, wins: number = 0, want: number = 3) => {
-    let temp = this.Bernoulli100()
-    let result: any = 0
-    if (temp && wins === want) {
-      return total
+  tryUntil = async (
+    want: number = 3,
+    wins: number = 0,
+    total: number = 0,
+    times: number = 1
+  ): Promise<number> => {
+    const result = await this.Bernoulli100()
+    wins += result
+    total++
+
+    if (result && wins === want && total === this.n) {
+      return times
+    } else if ((wins == want && total != this.n) || (wins != want && total == this.n)) {
+      return this.tryUntil(want, 0, 0, times + 1)
+    } else {
+      return this.tryUntil(want, wins, total, times)
     }
-    result = this.tryUntil(total + 1, temp ? wins + 1 : wins)
-    return result
   }
 
   expected() {
@@ -192,14 +200,14 @@ export class NegativeBinomial {
   }
 
   async probabilityAt(r: number) {
-    return await this.tryUntil(1, 0, r)
+    return await this.tryUntil(r)
   }
 
   async calculate() {
-    noop()
-    // let { comb, power } = new Calc()
-    // let n = this.n
-    // let p = this.p
-    // return comb(n - 1, r - 1) * power(p, r) * power(1 - p, n - r)
+    let { comb, power } = new Calc()
+    let n = 10
+    let r = 3
+    let p = 0.09
+    return comb(n - 1, r - 1) * power(p, r) * power(1 - p, n - r)
   }
 }

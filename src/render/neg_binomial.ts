@@ -3,11 +3,12 @@ import fs from 'fs'
 import { NegativeBinomial } from './../distributions'
 import { updateProgressBar } from './../utils'
 /* FOR NOW RENDERS ONLY FOR ONE DISTRIBUTON - just an example */
-let p = 0.09
+let p = 0.08
+let probAt = 3
 const geo = new NegativeBinomial(10, p)
 let sums: Record<string, number> = {}
 let id = geo.id
-let totalTimes = 100_000
+let totalTimes = 10_000
 let sentence = `Total trials (p: ${p}): `
 if (totalTimes >= 1_000_000) {
   sentence += Math.floor(totalTimes / 1_000_000) + 'm \n'
@@ -22,7 +23,8 @@ console.log(sentence)
 console.time('Rendered')
 const setSums = async () => {
   for (let i = 0; i < totalTimes; i++) {
-    let calc = await geo.probabilityAt(3)
+    let calc = await geo.probabilityAt(probAt)
+
     if (String(calc) in sums) {
       sums[String(calc)] += 1
     } else {
@@ -30,7 +32,6 @@ const setSums = async () => {
     }
     updateProgressBar(i, totalTimes)
   }
-  process.stdout.write('\n')
   return sums
 }
 
@@ -39,7 +40,7 @@ setSums()
     const data = sums
 
     // Set up the canvas
-    const canvasWidth = Object.keys(data).length * 10 // Width of the canvas in pixels
+    const canvasWidth = Object.keys(data).length * 10 >= 2400 ? 2400 : Object.keys(data).length * 10 // Width of the canvas in pixels
     const canvasHeight = 1080 // Height of the canvas in pixels
     const barPadding = 10 // Padding between bars in pixels
     const maxBarHeight = canvasHeight - barPadding * 2 // Maximum height of the bars
@@ -47,6 +48,7 @@ setSums()
     const canvas = createCanvas(canvasWidth, canvasHeight)
     const ctx = canvas.getContext('2d')
 
+    let printedtitle = false
     // Set up the font (if needed)
     // registerFont('path/to/font.ttf', { family: 'Font Name' });
 
@@ -58,7 +60,7 @@ setSums()
     const labelColor = '#000'
 
     // Calculate the width of each bar
-    const barWidth = (canvasWidth - barPadding * 2) / Object.keys(data).length
+    const barWidth = (canvasWidth - barPadding * 2) / (canvasWidth / 10)
 
     // Draw the bars
     let x = barPadding
@@ -76,10 +78,11 @@ setSums()
       ctx.font = '12px sans-serif'
       ctx.textAlign = 'center'
       ctx.fillText(key, x + barWidth / 2, canvasHeight - 5)
-      if (maxValue === value) {
+      if (maxValue === value && !printedtitle) {
         let fontSize = (12 * canvasWidth) / 500
         ctx.font = String(fontSize) + 'px sans-serif'
-        ctx.fillText(`${value}/${totalTimes} @ ${key}`, fontSize * 5, fontSize * 1.5)
+        ctx.fillText(`${value}/${totalTimes} @ ${key}`, canvasWidth - fontSize * 5, fontSize * 1.5)
+        printedtitle = true
       }
       x += barWidth + barPadding
     }
