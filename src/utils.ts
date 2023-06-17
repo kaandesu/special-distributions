@@ -29,3 +29,13 @@ export class Calc {
 
 // const { factorial, power, comb } = new Calc()
 // console.log(comb(4, 2) * power(1 / 3, 2) * power(2 / 3, 2), factorial(5))
+
+let progressBar = '' // Empty progress bar
+// Update the progress bar
+export const updateProgressBar = (currentIteration: number = 0, totalIterations: number = 100) => {
+  const progress = Math.round((currentIteration / totalIterations) * 100)
+  const filledWidth = Math.round((progress / 100) * 20)
+  const emptyWidth = 20 - filledWidth
+  progressBar = '[' + '#'.repeat(filledWidth) + '.'.repeat(emptyWidth) + '] ' + progress + '%'
+  process.stdout.write('\r' + progressBar) // Update the progress bar on the same line
+}

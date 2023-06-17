@@ -1,14 +1,26 @@
 import { createCanvas } from 'canvas'
 import fs from 'fs'
 import { GeometricDistribution } from './../distributions'
-
+import { updateProgressBar } from './../utils'
 /* FOR NOW RENDERS ONLY FOR ONE DISTRIBUTON - just an example */
 
-const geo = new GeometricDistribution(0.01)
+let p = 0.01
+const geo = new GeometricDistribution(p)
 let sums: Record<string, number> = {}
 let totalTimes = 100_000
 let id = geo.id
-console.time('calculation')
+
+let sentence = `Total trials (p: ${p}): `
+if (totalTimes >= 1_000_000) {
+  sentence += Math.floor(totalTimes / 1_000_000) + 'm \n'
+  console.log('This will take a while...')
+} else if (totalTimes >= 1_000) {
+  sentence += Math.floor(totalTimes / 1_000) + 'k \n'
+} else {
+  sentence += totalTimes + '\n'
+}
+console.log(sentence)
+console.time('Rendered')
 const setSums = async () => {
   for (let i = 0; i < totalTimes; i++) {
     let calc = await geo.calculate()
@@ -17,9 +29,9 @@ const setSums = async () => {
     } else {
       sums[String(calc)] = 1
     }
-    console.clear()
-    console.log(((i * 100) / totalTimes + 0.001).toFixed(2) + '%')
+    updateProgressBar(i, totalTimes)
   }
+  process.stdout.write('\n')
   return sums
 }
 
@@ -79,5 +91,5 @@ setSums()
     })
   })
   .finally(() => {
-    console.timeEnd('calculation')
+    console.timeEnd('Rendered')
   })

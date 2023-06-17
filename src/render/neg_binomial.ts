@@ -1,14 +1,25 @@
 import { createCanvas } from 'canvas'
 import fs from 'fs'
 import { NegativeBinomial } from './../distributions'
-
+import { updateProgressBar } from './../utils'
 /* FOR NOW RENDERS ONLY FOR ONE DISTRIBUTON - just an example */
-
-const geo = new NegativeBinomial(10, 0.09)
+let p = 0.09
+const geo = new NegativeBinomial(10, p)
 let sums: Record<string, number> = {}
 let id = geo.id
-let totalTimes = 20_000
-console.time('calculation')
+let totalTimes = 100_000
+let sentence = `Total trials (p: ${p}): `
+if (totalTimes >= 1_000_000) {
+  sentence += Math.floor(totalTimes / 1_000_000) + 'm \n'
+  console.log('This will take a while...')
+} else if (totalTimes >= 1_000) {
+  sentence += Math.floor(totalTimes / 1_000) + 'k \n'
+} else {
+  sentence += totalTimes + '\n'
+}
+console.log(sentence)
+
+console.time('Rendered')
 const setSums = async () => {
   for (let i = 0; i < totalTimes; i++) {
     let calc = await geo.probabilityAt(3)
@@ -17,10 +28,9 @@ const setSums = async () => {
     } else {
       sums[String(calc)] = 1
     }
-    console.clear()
-    console.log(((i * 100) / totalTimes + 0.001).toFixed(2) + '%')
+    updateProgressBar(i, totalTimes)
   }
-  //console.log(sums)
+  process.stdout.write('\n')
   return sums
 }
 
@@ -94,5 +104,5 @@ setSums()
     })
   })
   .finally(() => {
-    console.timeEnd('calculation')
+    console.timeEnd('Rendered')
   })
